@@ -1,0 +1,9 @@
+package com.repsy.storage;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+public interface IStorageService {
+    void saveFile(String packageName, String version, String fileName, InputStream data) throws IOException;
+    byte[] loadFile(String packageName, String version, String fileName) throws IOException;
+}
