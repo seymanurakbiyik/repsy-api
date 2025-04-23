@@ -1,0 +1,25 @@
+package com.repsy.storage;
+
+import com.repsy.storage.impl.FileSystemStorageService;
+import com.repsy.storage.impl.MinioStorageService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class StorageConfiguration {
+
+    @Bean
+    public IStorageService storageService(
+            @Value("${storage.strategy:file-system}") String strategy,
+            @Value("${minio.endpoint:http://localhost:9000}") String minioEndpoint,
+            @Value("${minio.accessKey:minioadmin}") String minioAccessKey,
+            @Value("${minio.secretKey:minioadmin}") String minioSecretKey,
+            @Value("${minio.bucket:repsy-packages}") String minioBucket
+    ) {
+        if ("object-storage".equalsIgnoreCase(strategy)) {
+            return new MinioStorageService(minioEndpoint, minioAccessKey, minioSecretKey, minioBucket);
+        }
+        return new FileSystemStorageService();
+    }
+}
