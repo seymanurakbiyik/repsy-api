@@ -1,0 +1,28 @@
+package com.repsy.storage.impl;
+
+import com.repsy.storage.IStorageService;
+
+import java.io.*;
+import java.nio.file.*;
+
+public class FileSystemStorageService implements IStorageService {
+
+    private static final String BASE_DIR = "./storage";
+
+    @Override
+    public void saveFile(String packageName, String version, String fileName, InputStream data) throws IOException {
+        Path dir = Paths.get(BASE_DIR, packageName, version);
+        Files.createDirectories(dir);
+        Path filePath = dir.resolve(fileName);
+        Files.copy(data, filePath, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    @Override
+    public byte[] loadFile(String packageName, String version, String fileName) throws IOException {
+        Path filePath = Paths.get(BASE_DIR, packageName, version, fileName);
+        if (!Files.exists(filePath)) {
+            throw new FileNotFoundException("File not found: " + filePath);
+        }
+        return Files.readAllBytes(filePath);
+    }
+}
